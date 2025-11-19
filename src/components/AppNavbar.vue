@@ -51,4 +51,4 @@ export default {
 .navbar {
   z-index: 1030;
 }
-</style>        
+</style>
