@@ -293,12 +293,10 @@ export default {
 
       const barcodeValue = String(this.selectedProduk.id).padStart(12, '0');
       
-      // Generate barcode untuk print
-      const printSvg = document.createElement('div');
-      printSvg.id = 'tempBarcode';
-      document.getElementById('barcodeForPrint').appendChild(printSvg);
-
-      JsBarcode('#tempBarcode', barcodeValue, {
+      // Buat SVG element langsung di memory
+      const svgElement = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      
+      JsBarcode(svgElement, barcodeValue, {
         format: 'CODE128',
         width: 3,
         height: 100,
@@ -310,12 +308,14 @@ export default {
       printWindow.document.write('<html><head><title>Cetak Barcode</title>');
       printWindow.document.write('<style>body { font-family: Arial; } .print-content { padding: 20px; text-align: center; }</style>');
       printWindow.document.write('</head><body>');
-      printWindow.document.write(document.getElementById('barcodePrint').innerHTML);
+      printWindow.document.write('<div style="text-align: center; padding: 20px;">');
+      printWindow.document.write('<h3 style="margin-bottom: 10px;">' + this.selectedProduk.namaProduk + '</h3>');
+      printWindow.document.write(svgElement.outerHTML);
+      printWindow.document.write('<h4 style="margin-top: 10px;">Rp ' + this.formatRupiah(this.selectedProduk.harga) + '</h4>');
+      printWindow.document.write('</div>');
       printWindow.document.write('</body></html>');
       printWindow.document.close();
       printWindow.print();
-
-      document.getElementById('barcodeForPrint').innerHTML = '';
     },
 
     printStruk() {

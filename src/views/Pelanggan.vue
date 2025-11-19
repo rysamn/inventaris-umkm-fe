@@ -52,7 +52,7 @@
             </tr>
             <tr v-for="(item, index) in filteredPelanggan" :key="item.id">
               <td class="fw-bold">{{ index + 1 }}</td>
-              <td>{{ item.nama }}</td>
+              <td>{{ item.namaPelanggan }}</td>
               <td>{{ item.telepon }}</td>
               <td>{{ item.alamat }}</td>
               <td>
@@ -88,7 +88,7 @@
           <div class="modal-body">
             <div class="mb-3">
               <label class="form-label">Nama Pelanggan</label>
-              <input v-model="form.nama" type="text" class="form-control" required>
+              <input v-model="form.namaPelanggan" type="text" class="form-control" required>
             </div>
             <div class="mb-3">
               <label class="form-label">Telepon</label>
@@ -134,16 +134,17 @@ export default {
   },
   computed: {
     filteredPelanggan() {
-      return this.pelangganList.filter(item =>
-        item.nama.toLowerCase().includes(this.searchQuery.toLowerCase())
-      );
+      return this.pelangganList.filter(item => {
+        if (!item || !item.namaPelanggan) return false;
+        return item.namaPelanggan.toLowerCase().includes(this.searchQuery.toLowerCase());
+      });
     }
   },
   methods: {
     async loadData() {
       this.loading = true;
       try {
-        const response = await api.get('/pelanggan');
+        const response = await api.pelanggan.getAll();
         this.pelangganList = response.data || [];
       } catch (error) {
         console.error('Error loading pelanggan:', error);
@@ -157,7 +158,7 @@ export default {
         this.form = { ...item };
         this.isEdit = true;
       } else {
-        this.form = { id: null, nama: '', telepon: '', alamat: '' };
+        this.form = { id: null, namaPelanggan: '', telepon: '', alamat: '' };
         this.isEdit = false;
       }
       this.modal.show();
@@ -165,9 +166,9 @@ export default {
     async savePelanggan() {
       try {
         if (this.isEdit) {
-          await api.put(`/pelanggan/${this.form.id}`, this.form);
+          await api.pelanggan.update(this.form.id, this.form);
         } else {
-          await api.post('/pelanggan', this.form);
+          await api.pelanggan.create(this.form);
         }
         this.modal.hide();
         this.loadData();
@@ -179,7 +180,7 @@ export default {
     async deletePelanggan(id) {
       if (confirm('Yakin ingin menghapus data pelanggan ini?')) {
         try {
-          await api.delete(`/pelanggan/${id}`);
+          await api.pelanggan.delete(id);
           this.loadData();
         } catch (error) {
           console.error('Error deleting pelanggan:', error);

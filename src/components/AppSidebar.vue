@@ -1,11 +1,18 @@
 <template>
   <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
     <div class="position-sticky pt-3">
-      <ul class="nav flex-column">
+      <!-- Menu untuk Admin -->
+      <ul v-if="isAdmin" class="nav flex-column">
         <li class="nav-item">
           <router-link to="/" class="nav-link" active-class="active">
             <i class="bi bi-speedometer2 me-2"></i>
             Dashboard
+          </router-link>
+        </li>
+        <li class="nav-item">
+          <router-link to="/kasir" class="nav-link" active-class="active">
+            <i class="bi bi-cash-register me-2"></i>
+            Kasir (POS)
           </router-link>
         </li>
         <li class="nav-item">
@@ -27,6 +34,12 @@
           </router-link>
         </li>
         <li class="nav-item">
+          <router-link to="/transaksi" class="nav-link" active-class="active">
+            <i class="bi bi-receipt me-2"></i>
+            Transaksi
+          </router-link>
+        </li>
+        <li class="nav-item">
           <router-link to="/barcode" class="nav-link" active-class="active">
             <i class="bi bi-upc-scan me-2"></i>
             Barcode & Struk
@@ -34,15 +47,32 @@
         </li>
       </ul>
 
+      <!-- Menu untuk Kasir -->
+      <ul v-else-if="isKasir" class="nav flex-column">
+        <li class="nav-item">
+          <router-link to="/kasir" class="nav-link" active-class="active">
+            <i class="bi bi-cash-register me-2"></i>
+            Kasir (POS)
+          </router-link>
+        </li>
+        <li class="nav-item">
+          <router-link to="/transaksi" class="nav-link" active-class="active">
+            <i class="bi bi-receipt me-2"></i>
+            Riwayat Transaksi
+          </router-link>
+        </li>
+      </ul>
+
       <hr class="my-3">
 
       <div class="px-3">
-        <p class="text-muted small mb-1">Fitur Wajib MVP:</p>
-        <div class="d-flex flex-wrap gap-1">
-          <span class="badge bg-success text-white">CRUD</span>
-          <span class="badge bg-info text-white">Dashboard</span>
-          <span class="badge bg-warning text-dark">Barcode</span>
-        </div>
+        <p class="text-muted small mb-2">
+          <i class="bi bi-person-circle me-1"></i>
+          <strong>{{ userName }}</strong>
+        </p>
+        <span class="badge" :class="roleBadgeClass">
+          {{ userRole }}
+        </span>
       </div>
     </div>
   </nav>
@@ -50,7 +80,27 @@
 
 <script>
 export default {
-  name: 'AppSidebar'
+  name: 'AppSidebar',
+  computed: {
+    user() {
+      return JSON.parse(localStorage.getItem('user') || '{}');
+    },
+    userName() {
+      return this.user.namaPengguna || 'User';
+    },
+    userRole() {
+      return this.user.peran || 'guest';
+    },
+    isAdmin() {
+      return this.userRole === 'admin';
+    },
+    isKasir() {
+      return this.userRole === 'kasir';
+    },
+    roleBadgeClass() {
+      return this.isAdmin ? 'bg-danger' : 'bg-info';
+    }
+  }
 }
 </script>
 

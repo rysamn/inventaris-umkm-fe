@@ -31,7 +31,7 @@ api.interceptors.response.use(
       // Token tidak valid atau kedaluwarsa
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      // Redirect ke halaman login, asumsi path router adalah '/login'
+      // Redirect ke halaman login
       if (window.location.pathname !== '/login') {
         window.location.href = '/login';
       }
@@ -74,9 +74,44 @@ export default {
     delete: (id) => api.delete(`/pelanggan/${id}`)
   },
 
-  transaksi: {
-    getAll: () => api.get('/transaksi'),
-    getById: (id) => api.get(`/transaksi/${id}`),
-    create: (data) => api.post('/transaksi', data)
+  // PENJUALAN (untuk transaksi kasir)
+  penjualan: {
+    getAll: () => api.get('/penjualan'),
+    getById: (id) => api.get(`/penjualan/${id}`),
+    create: (data) => api.post('/penjualan', data),
+    delete: (id) => api.delete(`/penjualan/${id}`)
+  },
+
+  // PEMBELIAN
+  pembelian: {
+    getAll: () => api.get('/pembelian'),
+    getById: (id) => api.get(`/pembelian/${id}`),
+    create: (data) => api.post('/pembelian', data),
+    delete: (id) => api.delete(`/pembelian/${id}`)
+  },
+
+  // INVOICE
+  invoice: {
+    getById: (id) => api.get(`/invoice/${id}`),
+    print: (id) => `${API_BASE_URL}/invoice/print/${id}` // Return URL untuk print
+  },
+
+  // BARCODE
+  barcode: {
+    generate: (productId) => api.get(`/barcode/generate/${productId}`, {
+      responseType: 'blob'
+    }),
+    getText: (productId) => api.get(`/barcode/text/${productId}`)
+  },
+
+  // DASHBOARD
+  dashboard: {
+    getData: () => api.get('/dashboard')
+  },
+
+  // LOG INVENTARIS
+  log: {
+    getAll: () => api.get('/log'),
+    getLatest: (limit) => api.get(`/log/latest?limit=${limit}`)
   }
 };
