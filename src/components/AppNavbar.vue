@@ -10,7 +10,7 @@
           <i class="bi bi-person-circle me-2"></i>
           <span class="d-none d-md-inline">TIM 6 - XII RPL 1</span>
         </span>
-        <button class="btn btn-outline-light btn-sm">
+        <button @click="logout" class="btn btn-outline-light btn-sm">
           <i class="bi bi-box-arrow-right"></i>
         </button>
       </div>
@@ -20,7 +20,16 @@
 
 <script>
 export default {
-  name: 'AppNavbar'
+  name: 'AppNavbar',
+  methods: {
+    logout() {
+      // Hapus token dan data pengguna dari localStorage
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      // Arahkan ke halaman login
+      this.$router.push('/login');
+    }
+  }
 }
 </script>
 

@@ -12,13 +12,13 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: Login,
-    meta: { requiresAuth: false } // Tidak memerlukan otentikasi
+    meta: { requiresAuth: false, hideNavbar: true } // Tidak memerlukan otentikasi
   },
   {
     path: '/register',
     name: 'Register',
     component: Register,
-    meta: { requiresAuth: false }
+    meta: { requiresAuth: false, hideNavbar: true }
   },
   {
     path: '/',
