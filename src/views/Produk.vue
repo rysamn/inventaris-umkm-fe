@@ -68,6 +68,7 @@
             <thead class="table-light">
               <tr>
                 <th>#</th>
+                <th>Foto</th>
                 <th>Nama Produk</th>
                 <th>Kategori</th>
                 <th>Harga</th>
@@ -80,6 +81,18 @@
             <tbody>
               <tr v-for="(produk, index) in filteredProduk" :key="produk.id">
                 <td>{{ index + 1 }}</td>
+                <td>
+                  <img 
+                    v-if="produk.fotoProduk" 
+                    :src="api.produk.getFotoUrl(produk.fotoProduk)" 
+                    alt="Foto Produk"
+                    class="img-thumbnail"
+                    style="width: 50px; height: 50px; object-fit: cover;"
+                  >
+                  <span v-else class="badge bg-light text-dark">
+                    <i class="bi bi-image"></i> No Image
+                  </span>
+                </td>
                 <td>
                   <strong>{{ produk.namaProduk }}</strong>
                 </td>
@@ -180,6 +193,25 @@
                     <option value="unit">unit</option>
                   </select>
                 </div>
+                <div class="col-12">
+                  <label class="form-label">Foto Produk</label>
+                  <input 
+                    @change="handleFileUpload"
+                    type="file" 
+                    class="form-control" 
+                    accept="image/*"
+                    :disabled="uploadingFoto"
+                  >
+                  <small class="text-muted">Format: JPG, PNG, GIF (Max 5MB)</small>
+                </div>
+                <div v-if="fotoPreview" class="col-12">
+                  <div class="d-flex align-items-center gap-3">
+                    <img :src="fotoPreview" alt="Preview" class="img-thumbnail" style="max-width: 150px; max-height: 150px; object-fit: cover;">
+                    <div v-if="uploadingFoto" class="spinner-border text-primary" role="status">
+                      <span class="visually-hidden">Uploading...</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </form>
           </div>
@@ -187,7 +219,7 @@
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
               Batal
             </button>
-            <button type="button" @click="saveProduk" class="btn btn-primary">
+            <button type="button" @click="saveProduk" class="btn btn-primary" :disabled="uploadingFoto">
               <i class="bi bi-save me-2"></i>
               Simpan
             </button>
@@ -206,6 +238,7 @@ export default {
   name: 'ProdukView',
   data() {
     return {
+      api,
       produkList: [],
       loading: false,
       searchQuery: '',
@@ -217,10 +250,13 @@ export default {
         harga: 0,
         stok: 0,
         satuan: '',
-        namaKategori: ''
+        namaKategori: '',
+        fotoProduk: null
       },
       isEdit: false,
-      modal: null
+      modal: null,
+      fotoPreview: null,
+      uploadingFoto: false
     }
   },
   computed: {
@@ -269,10 +305,43 @@ export default {
       }
     },
     
+    async handleFileUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      // Validasi ukuran file (5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Ukuran file terlalu besar (max 5MB)');
+        event.target.value = '';
+        return;
+      }
+
+      try {
+        this.uploadingFoto = true;
+        const response = await api.produk.uploadFoto(file);
+        this.form.fotoProduk = response.data;
+        
+        // Preview
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          this.fotoPreview = e.target.result;
+        };
+        reader.readAsDataURL(file);
+        
+      } catch (error) {
+        console.error('Error uploading foto:', error);
+        alert('Gagal upload foto');
+        event.target.value = '';
+      } finally {
+        this.uploadingFoto = false;
+      }
+    },
+
     showModal(produk) {
       if (produk) {
         this.isEdit = true;
         this.form = { ...produk };
+        this.fotoPreview = produk.fotoProduk ? api.produk.getFotoUrl(produk.fotoProduk) : null;
       } else {
         this.isEdit = false;
         this.form = {
@@ -281,8 +350,10 @@ export default {
           harga: 0,
           stok: 0,
           satuan: '',
-          namaKategori: ''
+          namaKategori: '',
+          fotoProduk: null
         };
+        this.fotoPreview = null;
       }
       this.modal.show();
     },

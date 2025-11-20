@@ -28,10 +28,8 @@ api.interceptors.response.use(
   response => response,
   error => {
     if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-      // Token tidak valid atau kedaluwarsa
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      // Redirect ke halaman login
       if (window.location.pathname !== '/login') {
         window.location.href = '/login';
       }
@@ -55,7 +53,23 @@ export default {
     getById: (id) => api.get(`/produk/${id}`),
     create: (data) => api.post('/produk', data),
     update: (id, data) => api.put(`/produk/${id}`, data),
-    delete: (id) => api.delete(`/produk/${id}`)
+    delete: (id) => api.delete(`/produk/${id}`),
+    uploadFoto: (file) => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          resolve({
+            data: e.target.result.split(',')[1] // Base64 tanpa prefix
+          });
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    },
+    getFotoUrl: (fotoProduk) => {
+      if (!fotoProduk) return '';
+      return `data:image/jpeg;base64,${fotoProduk}`;
+    }
   },
 
   pemasok: {
