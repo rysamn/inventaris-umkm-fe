@@ -11,7 +11,7 @@
         </li>
         <li class="nav-item">
           <router-link to="/kasir" class="nav-link" active-class="active">
-            <i class="bi bi-cash-register me-2"></i>
+            <i class="bi bi-cash me-2"></i>
             Kasir (POS)
           </router-link>
         </li>
@@ -51,7 +51,7 @@
       <ul v-else-if="isKasir" class="nav flex-column">
         <li class="nav-item">
           <router-link to="/kasir" class="nav-link" active-class="active">
-            <i class="bi bi-cash-register me-2"></i>
+            <i class="bi bi-cash me-2"></i>
             Kasir (POS)
           </router-link>
         </li>

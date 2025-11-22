@@ -1,7 +1,7 @@
 <template>
   <div class="kasir-page">
     <h2 class="fw-bold mb-4">
-      <i class="bi bi-cash-register text-success"></i> Point of Sale (POS)
+      <i class="bi bi-cash text-success"></i> Point of Sale (POS)
     </h2>
 
     <div class="row g-4">
@@ -66,33 +66,36 @@
               <i class="bi bi-cart3"></i> Keranjang Belanja ({{ cart.length }} item)
             </h5>
           </div>
-          <div class="card-body">
+          <div class="card-body p-3">
             <div v-if="cart.length === 0" class="text-center text-muted py-4">
               <i class="bi bi-cart-x fs-1"></i>
               <p class="mt-2">Keranjang masih kosong</p>
             </div>
 
             <div v-else>
-              <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
-                <table class="table table-sm">
-                  <thead class="sticky-top bg-white">
+              <div class="cart-scroll">
+                <table class="table table-sm align-middle cart-table mb-0">
+                  <thead class="bg-white">
                     <tr>
-                      <th>Produk</th>
-                      <th width="80">Qty</th>
-                      <th>Harga</th>
-                      <th>Subtotal</th>
-                      <th width="50"></th>
+                      <th class="w-50">Produk</th>
+                      <th class="w-20">Qty</th>
+                      <th class="w-15 text-end">Harga</th>
+                      <th class="w-15 text-end">Subtotal</th>
+                      <th style="width: 50px;"></th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr v-for="(item, index) in cart" :key="index">
-                      <td>{{ item.namaProduk }}</td>
                       <td>
-                        <div class="input-group input-group-sm">
+                        <div class="text-truncate">{{ item.namaProduk }}</div>
+                      </td>
+                      <td>
+                        <div class="input-group input-group-sm qty-control">
                           <button 
                             @click="updateQty(index, -1)" 
                             class="btn btn-outline-secondary"
                             type="button"
+                            aria-label="Kurangi"
                           >
                             <i class="bi bi-dash"></i>
                           </button>
@@ -107,17 +110,19 @@
                             @click="updateQty(index, 1)" 
                             class="btn btn-outline-secondary"
                             type="button"
+                            aria-label="Tambah"
                           >
                             <i class="bi bi-plus"></i>
                           </button>
                         </div>
                       </td>
-                      <td>{{ formatRupiah(item.harga) }}</td>
-                      <td class="fw-bold">{{ formatRupiah(item.subtotal) }}</td>
-                      <td>
+                      <td class="text-end">{{ formatRupiah(item.harga) }}</td>
+                      <td class="fw-bold text-end">{{ formatRupiah(item.subtotal) }}</td>
+                      <td class="text-end">
                         <button 
                           @click="removeFromCart(index)" 
                           class="btn btn-sm btn-danger"
+                          aria-label="Hapus"
                         >
                           <i class="bi bi-trash"></i>
                         </button>
@@ -559,5 +564,39 @@ export default {
   position: sticky;
   top: 20px;
   z-index: 100;
+}
+
+/* Cart improvements */
+.cart-scroll {
+  max-height: 300px;
+  overflow-y: auto;
+  position: relative;
+}
+
+.cart-table thead th {
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 3;
+}
+
+.cart-table td,
+.cart-table th {
+  vertical-align: middle;
+}
+
+.cart-table .text-truncate {
+  max-width: 260px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.qty-control .form-control {
+  max-width: 80px;
+}
+
+.qty-control .btn {
+  padding: .25rem .45rem;
 }
 </style>
