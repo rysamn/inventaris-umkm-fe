@@ -53,6 +53,7 @@
                 v-model="credentials.namaPengguna"
                 required
                 placeholder="Masukkan username"
+                autofocus
                 autocomplete="username"
               />
             </div>
@@ -76,6 +77,7 @@
                   type="button" 
                   class="password-toggle"
                   @click="showPassword = !showPassword"
+                  :aria-label="showPassword ? 'Sembunyikan password' : 'Tampilkan password'"
                 >
                   <i :class="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
                 </button>
@@ -136,6 +138,14 @@ export default {
       rememberMe: false,
     };
   },
+  created() {
+    // Cek apakah ada username yang tersimpan di localStorage
+    const rememberedUser = localStorage.getItem('rememberedUser');
+    if (rememberedUser) {
+      this.credentials.namaPengguna = rememberedUser;
+      this.rememberMe = true;
+    }
+  },
   methods: {
     async handleLogin() {
       this.loading = true;
@@ -147,6 +157,13 @@ export default {
         if (token) {
           localStorage.setItem('token', token);
           localStorage.setItem('user', JSON.stringify(userData));
+
+          // Logika untuk "Remember Me"
+          if (this.rememberMe) {
+            localStorage.setItem('rememberedUser', this.credentials.namaPengguna);
+          } else {
+            localStorage.removeItem('rememberedUser');
+          }
           
           // Redirect sesuai role
           if (userData.peran === 'kasir') {
@@ -182,7 +199,7 @@ export default {
   overflow: hidden;
 }
 
-/* Gradient Background */
+/* Gradient Background - FIXED */
 .gradient-background {
   position: fixed;
   top: 0;
@@ -191,6 +208,7 @@ export default {
   bottom: 0;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   z-index: 0;
+  pointer-events: none; /* Ini yang penting! */
 }
 
 .gradient-background::before {
@@ -203,6 +221,7 @@ export default {
   background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
   background-size: 50px 50px;
   animation: moveBackground 20s linear infinite;
+  pointer-events: none; /* Ini juga penting */
 }
 
 @keyframes moveBackground {
@@ -213,7 +232,7 @@ export default {
 /* Main Container */
 .login-container {
   position: relative;
-  z-index: 1;
+  z-index: 2; /* Pastikan lebih tinggi dari background */
   display: flex;
   width: 90%;
   max-width: 1100px;
@@ -224,7 +243,7 @@ export default {
   overflow: hidden;
 }
 
-/* Branding Side */
+/* Branding Side - FIXED */
 .branding-side {
   flex: 1;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -233,6 +252,7 @@ export default {
   align-items: center;
   justify-content: center;
   position: relative;
+  z-index: 1;
 }
 
 .branding-side::before {
@@ -245,6 +265,7 @@ export default {
   background: radial-gradient(circle, rgba(255,255,255,0.1) 2px, transparent 2px);
   background-size: 40px 40px;
   animation: rotateBackground 30s linear infinite;
+  pointer-events: none; /* Ini yang diperbaiki */
 }
 
 @keyframes rotateBackground {
@@ -254,7 +275,7 @@ export default {
 
 .branding-content {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   text-align: center;
   color: white;
 }
@@ -316,6 +337,8 @@ export default {
   align-items: center;
   justify-content: center;
   background: #ffffff;
+  position: relative;
+  z-index: 2; /* Pastikan form side bisa menerima event click */
 }
 
 .login-card {
@@ -368,6 +391,8 @@ export default {
   padding: 12px 20px;
   font-size: 1rem;
   transition: all 0.3s ease;
+  position: relative;
+  z-index: 3; /* Pastikan input di atas semua elemen */
 }
 
 .custom-input:focus {
@@ -391,6 +416,7 @@ export default {
   cursor: pointer;
   padding: 5px;
   transition: color 0.3s ease;
+  z-index: 4; /* Pastikan tombol toggle bisa diklik */
 }
 
 .password-toggle:hover {
@@ -443,6 +469,8 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  z-index: 3;
 }
 
 .btn-login:hover:not(:disabled) {
