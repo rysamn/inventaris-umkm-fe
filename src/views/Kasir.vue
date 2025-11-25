@@ -505,15 +505,42 @@ export default {
       }
     },
 
-    cetakStruk() {
+    async cetakStruk() {
       if (!this.lastPenjualanId) {
         alert('Tidak ada transaksi untuk dicetak');
         return;
       }
 
-      // Buka struk di tab baru
-      const printUrl = `http://localhost:8080/api/invoice/print/${this.lastPenjualanId}`;
-      window.open(printUrl, '_blank');
+      try {
+        const response = await fetch(`http://localhost:8080/api/invoice/print/${this.lastPenjualanId}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Gagal memuat struk');
+        }
+
+        const html = await response.text();
+
+        const printWindow = window.open('', '_blank', 'width=600,height=800');
+        if (!printWindow) {
+          alert('Popup diblokir. Mohon izinkan popup untuk situs ini.');
+          return;
+        }
+
+        printWindow.document.write(html);
+        printWindow.document.close();
+        printWindow.focus();
+
+        printWindow.onload = function() {
+          printWindow.print();
+        };
+      } catch (error) {
+        alert(error.message);
+      }
     },
 
     closeModalAndReset() {
