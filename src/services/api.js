@@ -54,20 +54,21 @@ export default {
     create: (data) => api.post('/produk', data),
     update: (id, data) => api.put(`/produk/${id}`, data),
     delete: (id) => api.delete(`/produk/${id}`),
-    uploadFoto: (file) => {
+    fileToBase64: (file) => {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.onload = (e) => {
-          resolve({
-            data: e.target.result.split(',')[1] // Base64 tanpa prefix
-          });
-        };
-        reader.onerror = reject;
         reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result.split(',')[1]); 
+        reader.onerror = reject;
       });
     },
     getFotoUrl: (fotoProduk) => {
       if (!fotoProduk) return '';
+      // Jika sudah berupa data URL lengkap, return langsung
+      if (fotoProduk.startsWith('data:image/')) {
+        return fotoProduk;
+      }
+      // Jika masih plain Base64, tambahkan prefix
       return `data:image/jpeg;base64,${fotoProduk}`;
     }
   },
@@ -90,7 +91,7 @@ export default {
 
   // PENJUALAN (untuk transaksi kasir)
   penjualan: {
-    getAll: () => api.get('/penjualan'),
+    getAll: (page, size) => api.get(`/penjualan?page=${page}&size=${size}`),
     getById: (id) => api.get(`/penjualan/${id}`),
     create: (data) => api.post('/penjualan', data),
     delete: (id) => api.delete(`/penjualan/${id}`)

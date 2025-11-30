@@ -67,7 +67,7 @@
                 <td>{{ item.namaPelanggan || 'Umum' }}</td>
                 <td>{{ item.namaPengguna }}</td>
                 <td class="fw-bold text-success">Rp {{ formatRupiah(item.total) }}</td>
-                <td>
+                <td> 
                   <div class="btn-group btn-group-sm">
                     <button 
                       @click="showDetail(item)" 
@@ -89,6 +89,28 @@
             </tbody>
           </table>
         </div>
+
+        <!-- Pagination -->
+        <div v-if="!loading && transaksiList.length > 0" class="d-flex justify-content-end align-items-center mt-3">
+          <span class="me-3 text-muted">Halaman {{ currentPage + 1 }}</span>
+          <div class="btn-group">
+            <button 
+              @click="changePage(currentPage - 1)" 
+              class="btn btn-outline-secondary"
+              :disabled="currentPage === 0"
+            >
+              <i class="bi bi-chevron-left"></i> Sebelumnya
+            </button>
+            <button 
+              @click="changePage(currentPage + 1)" 
+              class="btn btn-outline-secondary"
+              :disabled="transaksiList.length < pageSize"
+            >
+              Selanjutnya <i class="bi bi-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -171,7 +193,10 @@ export default {
       searchQuery: '',
       filterTanggal: '',
       selectedTransaksi: null,
-      modal: null
+      modal: null,
+      currentPage: 0,
+      pageSize: 10,
+      hasNextPage: true
     }
   },
   computed: {
@@ -205,7 +230,7 @@ export default {
     async loadData() {
       this.loading = true;
       try {
-        const response = await api.penjualan.getAll();
+        const response = await api.penjualan.getAll(this.currentPage, this.pageSize);
         this.transaksiList = response.data;
       } catch (error) {
         console.error('Error loading transaksi:', error);
@@ -213,6 +238,11 @@ export default {
       } finally {
         this.loading = false;
       }
+    },
+
+    changePage(page) {
+      this.currentPage = page;
+      this.loadData();
     },
 
     async showDetail(transaksi) {

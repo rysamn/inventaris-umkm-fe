@@ -318,16 +318,17 @@ export default {
 
       try {
         this.uploadingFoto = true;
-        const response = await api.produk.uploadFoto(file);
-        this.form.fotoProduk = response.data;
+        // 1. Ubah file menjadi Base64
+        const base64String = await api.produk.fileToBase64(file);
+        // 2. Simpan string Base64 ke dalam form
+        this.form.fotoProduk = base64String;
         
-        // Preview
+        // 3. Buat URL preview dari string Base64 yang baru didapat
         const reader = new FileReader();
         reader.onload = (e) => {
           this.fotoPreview = e.target.result;
         };
         reader.readAsDataURL(file);
-        
       } catch (error) {
         console.error('Error uploading foto:', error);
         alert('Gagal upload foto');
@@ -341,7 +342,10 @@ export default {
       if (produk) {
         this.isEdit = true;
         this.form = { ...produk };
-        this.fotoPreview = produk.fotoProduk ? api.produk.getFotoUrl(produk.fotoProduk) : null;
+        // Saat edit, buat URL preview dari data Base64 yang ada
+        this.fotoPreview = produk.fotoProduk
+          ? api.produk.getFotoUrl(produk.fotoProduk)
+          : null;
       } else {
         this.isEdit = false;
         this.form = {
