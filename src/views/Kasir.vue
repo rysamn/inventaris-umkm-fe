@@ -334,7 +334,7 @@ export default {
 
     async loadPelanggan() {
       try {
-        const response = await api.pelanggan.getAllList();
+        const response = await api.pelanggan.getAll();
         this.pelangganList = response.data;
       } catch (error) {
         console.error('Error loading pelanggan:', error);
@@ -485,7 +485,7 @@ export default {
         await api.penjualan.create(penjualanData);
         
         // Ambil ID penjualan dari response atau ambil terakhir
-        const penjualanListResponse = await api.penjualan.getAllList();
+        const penjualanListResponse = await api.penjualan.getAll();
         const lastPenjualan = penjualanListResponse.data[0]; // Asumsi sorted DESC
         
         this.lastPenjualanId = lastPenjualan.id;
