@@ -211,7 +211,7 @@ export default {
       try {
         // Load semua data
         const [produkRes, pemasokRes, pelangganRes] = await Promise.all([
-          api.produk.getAll(),
+          api.produk.getAllList(),
           api.pemasok.getAll(),
           api.pelanggan.getAll()
         ]);

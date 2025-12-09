@@ -50,6 +50,7 @@ export default {
 
   produk: {
     getAll: () => api.get('/produk'),
+    getAllList: () => api.get('/produk/without-foto'), // Endpoint baru tanpa foto
     getById: (id) => api.get(`/produk/${id}`),
     create: (data) => api.post('/produk', data),
     update: (id, data) => api.put(`/produk/${id}`, data),
