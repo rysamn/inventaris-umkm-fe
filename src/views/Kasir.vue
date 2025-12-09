@@ -324,7 +324,7 @@ export default {
   methods: {
     async loadProduk() {
       try {
-        const response = await api.produk.getAll();
+        const response = await api.produk.getAllList();
         this.produkList = response.data.filter(p => p.stok > 0); // Hanya tampilkan produk yang stoknya > 0
       } catch (error) {
         console.error('Error loading produk:', error);
@@ -334,7 +334,7 @@ export default {
 
     async loadPelanggan() {
       try {
-        const response = await api.pelanggan.getAll();
+        const response = await api.pelanggan.getAllList();
         this.pelangganList = response.data;
       } catch (error) {
         console.error('Error loading pelanggan:', error);
@@ -485,7 +485,7 @@ export default {
         await api.penjualan.create(penjualanData);
         
         // Ambil ID penjualan dari response atau ambil terakhir
-        const penjualanListResponse = await api.penjualan.getAll();
+        const penjualanListResponse = await api.penjualan.getAllList();
         const lastPenjualan = penjualanListResponse.data[0]; // Asumsi sorted DESC
         
         this.lastPenjualanId = lastPenjualan.id;
