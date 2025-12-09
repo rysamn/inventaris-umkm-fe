@@ -206,7 +206,7 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1381db 0%, #6799d6 100%);
   z-index: 0;
   pointer-events: none; /* Ini yang penting! */
 }
@@ -246,7 +246,7 @@ export default {
 /* Branding Side - FIXED */
 .branding-side {
   flex: 1;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1381db 0%, #60a5fa 100%);
   padding: 60px 50px;
   display: flex;
   align-items: center;
@@ -458,7 +458,7 @@ export default {
 .btn-login {
   width: 100%;
   height: 50px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1381db 0%, #60a5fa 100%);
   border: none;
   border-radius: 12px;
   color: white;
@@ -496,7 +496,7 @@ export default {
 }
 
 .copyright strong {
-  color: #667eea;
+  color: #1381db;
   font-weight: 600;
 }
 
